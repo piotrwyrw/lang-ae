@@ -1,0 +1,46 @@
+# Demo 2
+# ~~~~~~~
+# A set of basic functions for computing the perimeter and area of a square, rectangle and a circle
+# Use: ld "demo/geo.exec"
+
+# Print a welcome message to the user
+note "This module contains useful functions for basic geometry computations."
+
+# Make sure to remove all functions before (re-)defining them
+if defined<pi> or defined<e> or defined<perimeter_square> or defined<area_square> or defined<area_rectangle> or defined<perimeter_rectangle> or defined<area_square> or defined<area_circle> or defined<perimeter_circle> run note "Some functions are already defined. Cleaning up."
+if defined<pi> run undef pi?
+if defined<e> run undef e?
+
+if defined<perimeter_square> run undef perimeter_square?
+if defined<iperimeter_square> run undef iperimeter_square
+if defined<area_square> run undef area_square?
+if defined<iarea_square> run undef iarea_square?
+if defined<perimeter_rectangle> run undef perimeter_rectangle?
+if defined<iperimeter_rectangle> run undef iperimeter_rectangle?
+if defined<area_square> run undef area_rectangle?
+if defined<iarea_square> run undef iarea_square?
+
+if defined<area_circle> run undef area_circle?
+if defined<iarea_circle> run undef iarea_circle?
+if defined<perimeter_circle> run undef perimeter_circle?
+if defined<iperimeter_circle> run undef iperimeter_circle?
+
+# Mathematical "constants"
+def pi:0 ->  3.14159 then def e:0 -> 2.71828
+
+# Square functions
+def perimeter_square:1 -> 4 * $1 then def area_square:1 -> $1^2
+def iperimeter_square:0 -> perimeter_square(prompt<"Length a">)
+def iarea_square:0 -> area_square(prompt<"Length a">)
+
+# Rectangle functions
+def perimeter_rectangle:2 -> 2 * $1 + 2 * $2 then def area_rectangle:2 -> $1*$2
+def iperimeter_rectangle:0 -> perimeter_rectangle(prompt<"Length a">; prompt<"Length b">)
+def iarea_rectangle:0 -> area_rectangle(prompt<"Length a">; prompt<"Length b">)
+
+# Circle functions
+def area_circle:1 -> pi() * $1^2 then def perimeter_circle:1 -> pi() * 2 * $1
+def iarea_circle:0 -> area_circle(prompt<"Radius r">)
+def iperimeter_circle:0 -> perimeter_circle(prompt<"Radius r">)
+
+note "All functions have been loaded. Use 'info' to view the individual signatures."

@@ -1,0 +1,6 @@
+# Demo 1
+# ~~~~~~~
+# A very simple Hello, World! example
+# Use: ld "demo/hw.exec"
+
+note "Hello, World!"

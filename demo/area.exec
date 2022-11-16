@@ -1,0 +1,38 @@
+# Demo 3
+# ~~~~~~~~
+# Calculate the area under the function f(x) = (x-2)^2 between the interval [0; 4]
+# AKA The integral of (x-2)^2 between 0 and 4
+# Use: ld "demo/area.exec"
+
+# Define the interval
+var minX default 0
+var maxX default 4
+
+# Calculate the required value/s for further computations
+var samples default 10^7
+var deltaX default (maxX - minX) / samples
+
+# The function under which we're trying to find the area
+def f:1 -> ($1 - 2)^2
+
+# Area is the accumulator variable
+var area default 0
+
+# X gets incremented by deltaX every iteration
+var x default minX
+
+# Calculate the area
+note "Computing area .."
+repeat samples times run area -> area + deltaX * f(x) then x -> x + deltaX
+
+# Output our result
+note "" then note "The calculated area is:" then area
+
+# Clean up after ourselves
+undef minX?
+undef maxX?
+undef samples?
+undef deltaX?
+undef f?
+undef area?
+undef x?
