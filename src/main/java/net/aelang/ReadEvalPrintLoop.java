@@ -304,7 +304,7 @@ public class ReadEvalPrintLoop {
             System.out.println("-".repeat(25));
             System.out.println(".exit       ~~  Exit the program");
             System.out.println(".show-ast   ~~  Show parser output (for debugging)");
-            System.out.println(".show-ast   ~~  Don't show parser output");
+            System.out.println(".hide-ast   ~~  Don't show parser output");
             System.out.println(".help       ~~  Show the help page");
             System.out.println(".lfn        ~~  List defined functions");
             System.out.println(".hist       ~~  Show past expressions");
