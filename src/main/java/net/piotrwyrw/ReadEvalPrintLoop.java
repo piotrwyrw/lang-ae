@@ -5,7 +5,6 @@ import net.piotrwyrw.functions.*;
 import net.piotrwyrw.parse.Parser;
 
 import java.io.*;
-import java.security.KeyPair;
 import java.util.*;
 
 public class ReadEvalPrintLoop {
@@ -54,6 +53,26 @@ public class ReadEvalPrintLoop {
 
             if (findBuiltin(n.id()) != null || findUserDefined(n.id()) != null) {
                 System.out.println("This function is already defined: \"" + n.id() + "\". Use 'undef <function>' to remove it.");
+                return;
+            }
+
+            boolean irecurse = false;
+            boolean iref = false;
+            try {
+                irecurse = examineFunction(n, n.expr(), ExaminationCriteria.CONTAINS_ILLEGAL_RECURSION);
+                iref = examineFunction(n, n.expr(), ExaminationCriteria.REFERENCES_UNDEFINED);
+            } catch (SolverError e) {
+                System.out.println("[Solver Error] " + e.getMessage());
+                return;
+            }
+
+            if (irecurse) {
+                System.out.println("[Error] The function definition of \"" + ((DefinitionNode) node).id() + "\" contains an illegal recursive call.");
+                return;
+            }
+
+            if (iref) {
+                System.out.println("[Warn] The function references a variable, that is not defined yet.");
                 return;
             }
 
@@ -146,7 +165,6 @@ public class ReadEvalPrintLoop {
             }
 
             throw new SolverError("No function by the name of \"" + call.id() + "\" could be found.");
-
         }
 
         if (node instanceof VariableCallNode) {
@@ -431,6 +449,30 @@ public class ReadEvalPrintLoop {
 
     }
 
+    public boolean examineFunction(DefinitionNode n, Node expr, ExaminationCriteria crit) throws SolverError {
+        if (!(expr instanceof SolvableNode) && !(expr instanceof PlaceholderAtomNode)) {
+            System.out.println(expr.dump(0));
+            throw new SolverError("An unsolvable node type was passed to a solver function.");
+        }
+
+        if (expr instanceof PlaceholderAtomNode)
+            return false;
+
+        if (expr instanceof BinaryNode b)
+            return examineFunction(n, b.left(), crit) || examineFunction(n, b.right(), crit);
+
+        if (expr instanceof ImmediateNode)
+            return false;
+
+        if (expr instanceof CallNode c)
+            return crit == ExaminationCriteria.CONTAINS_ILLEGAL_RECURSION && c.id().equalsIgnoreCase(n.id());
+
+        if (expr instanceof VariableCallNode v)
+            return crit == ExaminationCriteria.REFERENCES_UNDEFINED && variables.containsKey(v.id());
+
+        throw new SolverError("Unsupported node type passed.");
+    }
+
     private void process(String line) {
         if (line.trim().isEmpty() || line.trim().startsWith("#"))
             return;
@@ -473,12 +515,12 @@ public class ReadEvalPrintLoop {
     }
 
     public void startREPL() {
-        System.out.println("(C) Piotr Wywas, 2022\nInput an expression or '.exit' to exit, or '.help' for help.");
+        System.out.println("Advanced Expression Language\nInput an expression or '.exit' to exit, or '.help' for help.");
 
         scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.print("> ");
+            System.out.print("~> ");
             String line = scanner.nextLine();
 
             if (line.trim().isEmpty())

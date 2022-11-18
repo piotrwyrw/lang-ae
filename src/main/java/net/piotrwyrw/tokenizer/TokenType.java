@@ -40,8 +40,9 @@ public enum TokenType {
     QUESTION,
     LBRACKET,
     RBRACKET,
-    LREL,
-    RREL,
+
+    RGREATER,
+    LGREATER,
     UNDEFINED;
 
     public static TokenType simpleClassify(String str) {
@@ -113,14 +114,14 @@ public enum TokenType {
             return SEMI;
         if (str.matches("\\?"))
             return QUESTION;
-        if (str.matches("\\{"))
+        if (str.matches("\\["))
             return LBRACKET;
-        if (str.matches("\\}"))
+        if (str.matches("\\]"))
             return RBRACKET;
         if (str.matches("<"))
-            return LREL;
+            return RGREATER;
         if (str.matches(">"))
-            return RREL;
+            return LGREATER;
         return UNDEFINED;
     }
 

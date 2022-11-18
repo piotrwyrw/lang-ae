@@ -172,8 +172,8 @@ public class Parser {
 
             nextToken();
 
-            if (current.type() != TokenType.LREL)
-                throw new SyntaxError("Expected '<' after 'prompt'.");
+            if (current.type() != TokenType.LBRACKET)
+                throw new SyntaxError("Expected '[' after 'prompt'.");
 
             nextToken();
 
@@ -184,8 +184,8 @@ public class Parser {
 
             nextToken();
 
-            if (current.type() != TokenType.RREL)
-                throw new SyntaxError("Expected '>' after prompt message.");
+            if (current.type() != TokenType.RBRACKET)
+                throw new SyntaxError("Expected ']' after prompt message.");
 
             return new UserPromptNode(msg);
         }
@@ -406,27 +406,27 @@ public class Parser {
                 throw new SyntaxError("Expected expression after 'not'. Empty token encountered.");
         }
 
-        if (current.val().matches("[a-zA-Z_]+"))
+        if (current.val().matches("[a-zA-Z_]+") && next.type() == TokenType.LBRACKET)
             p = Predicate.fromToken(current);
         else
             throw new SyntaxError("Expected a predicate.");
 
         nextToken();
 
-        if (current.type() != TokenType.LREL)
-            throw new SyntaxError("Expected '<' after predicate.");
+        if (current.type() != TokenType.LBRACKET)
+            throw new SyntaxError("Expected '[' after predicate.");
 
         nextToken();
 
         if (current.type() != TokenType.IDEN)
-            throw new SyntaxError("Expected identifier after '<'");
+            throw new SyntaxError("Expected identifier after '['.");
 
         String id = current.val();
 
         nextToken();
 
-        if (current.type() != TokenType.RREL)
-            throw new SyntaxError("Expected '>' after identifier within the predicate.");
+        if (current.type() != TokenType.RBRACKET)
+            throw new SyntaxError("Expected ']' after identifier within the predicate.");
 
         if (!not)
             return new LogicalExpressionPredicateNode(p, id);

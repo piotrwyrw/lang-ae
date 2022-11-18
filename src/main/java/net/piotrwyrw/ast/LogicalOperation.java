@@ -9,6 +9,8 @@ public enum LogicalOperation {
     AND,
     XOR,
     NOT,
+    LEFT_GREATER,
+    RIGHT_GREATER,
     UNDEFINED;
 
     public static LogicalOperation fromToken(Token token) {
@@ -21,6 +23,8 @@ public enum LogicalOperation {
             case IDEN_AND: return AND;
             case IDEN_XOR: return XOR;
             case IDEN_NOT: return NOT;
+            case RGREATER: return RIGHT_GREATER;
+            case LGREATER: return LEFT_GREATER;
             default: return UNDEFINED;
         }
     }
