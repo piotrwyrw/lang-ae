@@ -3,6 +3,7 @@ package net.aelang;
 import net.aelang.ast.*;
 import net.aelang.functions.*;
 import net.aelang.parse.Parser;
+import net.piotrwyrw.ExaminationCriteria;
 
 import java.io.*;
 import java.util.*;
