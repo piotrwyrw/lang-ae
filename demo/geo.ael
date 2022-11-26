@@ -6,6 +6,8 @@
 # Print a welcome message to the user
 note "This module contains useful functions for basic geometry computations."
 
+complex rectangle {width, height}
+
 # Make sure to remove all functions before (re-)defining them
 if defined[pi] or defined[e] or defined[perimeter_square] or defined[area_square] or defined[area_rectangle] or defined[perimeter_rectangle] or defined[area_square] or defined[area_circle] or defined[perimeter_circle] run note "Some functions are already defined. Cleaning up."
 if defined[pi] run undef pi?

@@ -1,6 +1,9 @@
 package net.aelang.ast;
 
+import net.aelang.Pair;
 import net.aelang.Tools;
+import net.aelang.codegen.Register;
+import net.aelang.codegen.instruction.Instruction;
 
 import java.util.List;
 
@@ -43,5 +46,10 @@ public class CallNode extends SolvableNode {
         lpad--;
 
         return s;
+    }
+
+    @Override
+    public Pair<Register, Instruction[]> assemble() {
+        return null;
     }
 }

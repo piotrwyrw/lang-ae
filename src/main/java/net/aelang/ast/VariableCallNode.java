@@ -1,6 +1,9 @@
 package net.aelang.ast;
 
+import net.aelang.Pair;
 import net.aelang.Tools;
+import net.aelang.codegen.Register;
+import net.aelang.codegen.instruction.Instruction;
 
 public class VariableCallNode extends SolvableNode {
 
@@ -23,4 +26,8 @@ public class VariableCallNode extends SolvableNode {
         return Tools.leftpad(lpad) + "Variable: " + id + '\n';
     }
 
+    @Override
+    public Pair<Register, Instruction[]> assemble() {
+        return null;
+    }
 }

@@ -82,6 +82,8 @@ public class Parser {
             n = parseRepeat();
         else if (current.type() == TokenType.IDEN_RECALL)
             n = parseRecall();
+        else if (current.type() == TokenType.IDEN_COMPLEX)
+            n = parseComplex();
         else
             n = parseFirstDegree(false);
 
@@ -106,7 +108,7 @@ public class Parser {
                 throw new SyntaxError("Expression expected.");
 
             Node right = parseSecondDegree(withinFunction);
-            left = new BinaryNode(left, right, op);
+            left = new BinaryNode((SolvableNode) left, (SolvableNode) right, op);
 
             if (next.type() == TokenType.ADD || next.type() == TokenType.SUB)
                 nextToken();
@@ -130,7 +132,7 @@ public class Parser {
                 throw new SyntaxError("Expression expected.");
 
             Node right = parseAtomWrapper(withinFunction);
-            left = new BinaryNode(left, right, op);
+            left = new BinaryNode((SolvableNode) left, (SolvableNode) right, op);
 
             if (next.type() == TokenType.MUL || next.type() == TokenType.DIV || next.type() == TokenType.POW)
                 nextToken();
@@ -149,7 +151,7 @@ public class Parser {
 
         Node n = parseAtom(withinFunction);
         if (subz)
-            n = new BinaryNode(n, new ImmediateNode(-1.0), BinaryOperation.MUL);
+            n = new BinaryNode((SolvableNode) n, new ImmediateNode(-1.0), BinaryOperation.MUL);
 
         return n;
     }
@@ -520,6 +522,51 @@ public class Parser {
         Node expr = parseFirstDegree(false);
 
         return new RecallNode(expr);
+    }
+
+    public Node parseComplex() throws LexerError, SyntaxError {
+        nextToken(); // Skip 'complex'
+
+        if (current.type() != TokenType.IDEN)
+            throw new SyntaxError("Expected identifier after 'complex'.");
+
+        String id = current.val();
+
+        nextToken(); // Skip complex type identifier
+
+        if (current.type() != TokenType.LBRACKET)
+            throw new SyntaxError("Expected left bracket '[' after complex type identifier.");
+
+        nextToken();
+
+        if (current.type() == TokenType.RBRACKET)
+            throw new SyntaxError("Expected at least one field in type \"" + id + "\".");
+
+        ArrayList<String> ids = new ArrayList<>();
+
+        while (true) {
+            if (current.type() != TokenType.IDEN)
+                throw new SyntaxError("Expected one or multiple semicolon-separated identifiers.");
+
+            if (ids.contains(current.val()))
+                throw new SyntaxError("The field \"" + current.val() + "\" has multiple definitions ~ The field names have to be unique.");
+
+            ids.add(current.val());
+
+            nextToken();
+
+            if (current.type() == TokenType.RBRACKET)
+                break;
+
+            if (current.type() == TokenType.SEMI) {
+                nextToken();
+                continue;
+            }
+
+            throw new SyntaxError("Expected ']' or ';' and more fields, got \"" + current.val() + "\"");
+        }
+
+        return new ComplexDefinitionNode(id, ids);
     }
 
 }

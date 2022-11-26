@@ -33,6 +33,7 @@ public enum TokenType {
     IDEN_REPEAT,
     IDEN_TIMES,
     IDEN_RECALL,
+    IDEN_COMPLEX,
     PLACEHOLDER,
     POINT_RIGHT,
     COLON,
@@ -104,6 +105,8 @@ public enum TokenType {
             return IDEN_TIMES;
         if (str.matches("recall"))
             return IDEN_RECALL;
+        if (str.matches("complex"))
+            return IDEN_COMPLEX;
         if (str.matches("[a-zA-Z_]+"))
             return IDEN;
         if (str.matches("\\-\\>"))
