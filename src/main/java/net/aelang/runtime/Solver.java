@@ -102,6 +102,7 @@ public class Solver {
 
     private double solveComplexAccess(ComplexAccessNode node) {
         // TODO Find a matching instance, access/solve the field, return the substitution value
+        return 0.0;
     }
 
 }
