@@ -43,6 +43,7 @@ public enum TokenType {
 
     RGREATER,
     LGREATER,
+    DOT,
     UNDEFINED;
 
     public static TokenType simpleClassify(String str) {
@@ -122,6 +123,8 @@ public enum TokenType {
             return RGREATER;
         if (str.matches(">"))
             return LGREATER;
+        if (str.matches("\\."))
+            return DOT;
         return UNDEFINED;
     }
 

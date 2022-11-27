@@ -4,12 +4,12 @@ import net.aelang.Tools;
 
 import java.util.List;
 
-public class CallNode extends SolvableNode {
+public class FunctionCallNode extends SolvableNode {
 
     private String id;
-    private List<Node> params;
+    private List<SolvableNode> params;
 
-    public CallNode(String id, List<Node> params) {
+    public FunctionCallNode(String id, List<SolvableNode> params) {
         this.id = id;
         this.params = params;
     }
@@ -22,11 +22,11 @@ public class CallNode extends SolvableNode {
         this.id = id;
     }
 
-    public List<Node> params() {
+    public List<SolvableNode> params() {
         return params;
     }
 
-    public void setParams(List<Node> params) {
+    public void setParams(List<SolvableNode> params) {
         this.params = params;
     }
 

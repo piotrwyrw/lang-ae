@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public class Tokenizer {
 
-    public static final String REGEX_PATTERN = "^(([0-9]+(\\.[0-9]+)?))|^(\\+|\\->?|\\*|\\/|\\^)|^(\\(|\\))|^([a-zA-Z_]+)|^(\\$[0-9]+)|^(\\:)|^(\\;)|^\"(.*?)\"|^\\?|^\\[|^\\]|^\\<|^\\>";
+    public static final String REGEX_PATTERN = "^(([0-9]+(\\.[0-9]+)?))|^(\\+|\\->?|\\*|\\/|\\^)|^(\\(|\\))|^([a-zA-Z_]+)|^(\\$[0-9]+)|^(\\:)|^(\\;)|^\"(.*?)\"|^\\?|^\\[|^\\]|^\\<|^\\>|^\\.";
 
     private Pattern pattern;
 

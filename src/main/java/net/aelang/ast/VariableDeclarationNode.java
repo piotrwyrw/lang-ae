@@ -5,9 +5,9 @@ import net.aelang.Tools;
 public class VariableDeclarationNode extends Node {
 
     private String id;
-    private Node def;
+    private SolvableNode def;
 
-    public VariableDeclarationNode(String id, Node def) {
+    public VariableDeclarationNode(String id, SolvableNode def) {
         this.id = id;
         this.def = def;
     }
@@ -20,11 +20,11 @@ public class VariableDeclarationNode extends Node {
         this.id = id;
     }
 
-    public Node def() {
+    public SolvableNode def() {
         return def;
     }
 
-    public void setDef(Node def) {
+    public void setDef(SolvableNode def) {
         this.def = def;
     }
 

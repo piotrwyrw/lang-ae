@@ -2,13 +2,14 @@ package net.aelang.runtime.elements;
 
 import net.aelang.ast.FunctionDefinitionNode;
 import net.aelang.ast.Node;
+import net.aelang.ast.SolvableNode;
 
 public class Function extends Element {
 
     private int parameters;
-    private Node expression;
+    private SolvableNode expression;
 
-    public Function(String id, int parameters, Node expression) {
+    public Function(String id, int parameters, SolvableNode expression) {
         super(id);
         this.parameters = parameters;
         this.expression = expression;
@@ -26,11 +27,11 @@ public class Function extends Element {
         this.parameters = parameters;
     }
 
-    public Node getExpression() {
+    public SolvableNode getExpression() {
         return expression;
     }
 
-    public void setExpression(Node expression) {
+    public void setExpression(SolvableNode expression) {
         this.expression = expression;
     }
 }

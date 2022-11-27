@@ -8,6 +8,7 @@ import net.aelang.tokenizer.Token;
 import net.aelang.tokenizer.TokenType;
 import net.aelang.tokenizer.Tokenizer;
 
+import java.rmi.StubNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -215,6 +216,10 @@ public class Parser {
             return new UserPromptNode(msg);
         }
 
+        if (current.type() == TokenType.IDEN && next.type() == TokenType.DOT) {
+            return parseComplexAccess();
+        }
+
         if (current.type() == TokenType.IDEN) {
             String id = current.val();
 
@@ -226,13 +231,13 @@ public class Parser {
 
             nextToken();
 
-            List<Node> params = new ArrayList<>();
+            List<SolvableNode> params = new ArrayList<>();
 
             if (current.type() == TokenType.RPAREN)
-                return new CallNode(id, params);
+                return new FunctionCallNode(id, params);
 
             while (true) {
-                Node n = parseFirstDegree(withinFunction);
+                SolvableNode n = parseFirstDegree(withinFunction);
 
                 params.add(n);
 
@@ -249,7 +254,7 @@ public class Parser {
                 throw new SyntaxError("Expected ')' or ';' and more parameters.");
             }
 
-            return new CallNode(id, params);
+            return new FunctionCallNode(id, params);
         }
 
         if (current.type() == TokenType.PLACEHOLDER && !withinFunction) {
@@ -292,7 +297,7 @@ public class Parser {
 
         nextToken();
 
-        Node expr = parseFirstDegree(true);
+        SolvableNode expr = parseFirstDegree(true);
 
         return new FunctionDefinitionNode(id, n, expr);
     }
@@ -478,7 +483,7 @@ public class Parser {
         if (current.type() == TokenType.UNDEFINED)
             throw new SyntaxError("Expected expression after 'default'.");
 
-        Node expr = parseFirstDegree(false);
+        SolvableNode expr = parseFirstDegree(false);
 
         return new VariableDeclarationNode(id, expr);
     }
@@ -544,6 +549,24 @@ public class Parser {
         Node expr = parseFirstDegree(false);
 
         return new RecallNode(expr);
+    }
+
+    public SolvableNode parseComplexAccess() throws LexerError, SyntaxError {
+        String id = current.val();
+
+        nextToken();
+
+        if (current.type() != TokenType.DOT)
+            throw new SyntaxError("Expected '.' after instance name \"" + id + "\".");
+
+        nextToken();
+
+        if (current.type() != TokenType.IDEN)
+            throw new SyntaxError("Expected identifier after '.'");
+
+        String field = current.val();
+
+        return new ComplexAccessNode(id, field);
     }
 
 }

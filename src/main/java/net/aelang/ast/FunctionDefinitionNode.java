@@ -6,9 +6,9 @@ public class FunctionDefinitionNode extends Node {
 
     private String id;
     private int params;
-    private Node expr;
+    private SolvableNode expr;
 
-    public FunctionDefinitionNode(String id, int params, Node expr) {
+    public FunctionDefinitionNode(String id, int params, SolvableNode expr) {
         this.id = id;
         this.params = params;
         this.expr = expr;
@@ -30,11 +30,11 @@ public class FunctionDefinitionNode extends Node {
         this.params = params;
     }
 
-    public Node expr() {
+    public SolvableNode expr() {
         return expr;
     }
 
-    public void setExpr(Node expr) {
+    public void setExpr(SolvableNode expr) {
         this.expr = expr;
     }
 
