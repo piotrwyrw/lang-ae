@@ -1,5 +1,6 @@
 package net.aelang.parse;
 
+import net.aelang.Global;
 import net.aelang.LexerError;
 import net.aelang.SyntaxError;
 import net.aelang.ast.*;
@@ -34,6 +35,29 @@ public class Parser {
         next = tokenizer.nextToken();
         if (next == null)
             next = new Token(TokenType.UNDEFINED, "", 0);
+    }
+
+    public static Node parse(String str) {
+        ALLOW_REPEAT = true;
+        Parser p = null;
+        try {
+            p = new Parser(str);
+        } catch (LexerError e) {
+            System.out.println("[Lexical Error] " + e.getMessage());
+            return null;
+        }
+        Node n = null;
+        try {
+            n = p.parse();
+        } catch (SyntaxError e) {
+            System.out.println("[Syntax Error] " + e.getMessage());
+        } catch (LexerError e) {
+            System.out.println("[Lexical Error] " + e.getMessage());
+        }
+        if (Global.showSyntaxTree) {
+            System.out.print((n != null) ? n.dump(0) : "<Null node>");
+        }
+        return n;
     }
 
     public String input() {
@@ -91,8 +115,8 @@ public class Parser {
         return n;
     }
 
-    public Node parseFirstDegree(boolean withinFunction) throws SyntaxError, LexerError {
-        Node left = parseSecondDegree(withinFunction);
+    public SolvableNode parseFirstDegree(boolean withinFunction) throws SyntaxError, LexerError {
+        SolvableNode left = parseSecondDegree(withinFunction);
 
         if (next.type() == TokenType.ADD || next.type() == TokenType.SUB)
             nextToken();
@@ -105,7 +129,7 @@ public class Parser {
             if (current.type() == TokenType.UNDEFINED)
                 throw new SyntaxError("Expression expected.");
 
-            Node right = parseSecondDegree(withinFunction);
+            SolvableNode right = parseSecondDegree(withinFunction);
             left = new BinaryNode(left, right, op);
 
             if (next.type() == TokenType.ADD || next.type() == TokenType.SUB)
@@ -115,8 +139,8 @@ public class Parser {
         return left;
     }
 
-    public Node parseSecondDegree(boolean withinFunction) throws SyntaxError, LexerError {
-        Node left = parseAtomWrapper(withinFunction);
+    public SolvableNode parseSecondDegree(boolean withinFunction) throws SyntaxError, LexerError {
+        SolvableNode left = parseAtomWrapper(withinFunction);
 
         if (next.type() == TokenType.MUL || next.type() == TokenType.DIV || next.type() == TokenType.POW)
             nextToken();
@@ -129,7 +153,7 @@ public class Parser {
             if (current.type() == TokenType.UNDEFINED)
                 throw new SyntaxError("Expression expected.");
 
-            Node right = parseAtomWrapper(withinFunction);
+            SolvableNode right = parseAtomWrapper(withinFunction);
             left = new BinaryNode(left, right, op);
 
             if (next.type() == TokenType.MUL || next.type() == TokenType.DIV || next.type() == TokenType.POW)
@@ -139,7 +163,7 @@ public class Parser {
         return left;
     }
 
-    public Node parseAtomWrapper(boolean withinFunction) throws SyntaxError, LexerError {
+    public SolvableNode parseAtomWrapper(boolean withinFunction) throws SyntaxError, LexerError {
         boolean subz = false;
 
         if (current.type() == TokenType.SUB) {
@@ -147,20 +171,20 @@ public class Parser {
             nextToken();
         }
 
-        Node n = parseAtom(withinFunction);
+        SolvableNode n = parseAtom(withinFunction);
         if (subz)
             n = new BinaryNode(n, new ImmediateNode(-1.0), BinaryOperation.MUL);
 
         return n;
     }
 
-    public Node parseAtom(boolean withinFunction) throws SyntaxError, LexerError {
+    public SolvableNode parseAtom(boolean withinFunction) throws SyntaxError, LexerError {
         if (current.type() == TokenType.INT_LIT || current.type() == TokenType.REAL_LIT)
             return new ImmediateNode(current);
 
         if (current.type() == TokenType.LPAREN) {
             nextToken();
-            Node sub = parseFirstDegree(withinFunction);
+            SolvableNode sub = parseFirstDegree(withinFunction);
             nextToken();
             if (current.type() != TokenType.RPAREN)
                 throw new SyntaxError("Expected ')' after expression.");
@@ -270,7 +294,7 @@ public class Parser {
 
         Node expr = parseFirstDegree(true);
 
-        return new DefinitionNode(id, n, expr);
+        return new FunctionDefinitionNode(id, n, expr);
     }
 
     public Node parseUndefine() throws LexerError, SyntaxError {

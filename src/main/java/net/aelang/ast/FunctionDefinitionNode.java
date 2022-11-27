@@ -2,13 +2,13 @@ package net.aelang.ast;
 
 import net.aelang.Tools;
 
-public class DefinitionNode extends Node {
+public class FunctionDefinitionNode extends Node {
 
     private String id;
     private int params;
     private Node expr;
 
-    public DefinitionNode(String id, int params, Node expr) {
+    public FunctionDefinitionNode(String id, int params, Node expr) {
         this.id = id;
         this.params = params;
         this.expr = expr;

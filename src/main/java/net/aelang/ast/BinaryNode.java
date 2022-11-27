@@ -4,29 +4,29 @@ import net.aelang.Tools;
 
 public class BinaryNode extends SolvableNode implements RecursiveNodePrint {
 
-    private Node left;
-    private Node right;
+    private SolvableNode left;
+    private SolvableNode right;
     private BinaryOperation op;
 
-    public BinaryNode(Node left, Node right, BinaryOperation op) {
+    public BinaryNode(SolvableNode left, SolvableNode right, BinaryOperation op) {
         this.left = left;
         this.right = right;
         this.op = op;
     }
 
-    public Node left() {
+    public SolvableNode left() {
         return left;
     }
 
-    public void setLeft(Node left) {
+    public void setLeft(SolvableNode left) {
         this.left = left;
     }
 
-    public Node right() {
+    public SolvableNode right() {
         return right;
     }
 
-    public void setRight(Node right) {
+    public void setRight(SolvableNode right) {
         this.right = right;
     }
 

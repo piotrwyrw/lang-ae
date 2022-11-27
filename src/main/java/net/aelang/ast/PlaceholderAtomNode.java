@@ -2,7 +2,7 @@ package net.aelang.ast;
 
 import net.aelang.Tools;
 
-public class PlaceholderAtomNode extends Node {
+public class PlaceholderAtomNode extends SolvableNode {
 
     private int ref;
 
