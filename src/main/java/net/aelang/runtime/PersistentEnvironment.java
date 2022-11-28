@@ -1,7 +1,11 @@
 package net.aelang.runtime;
 
 import net.aelang.Pair;
+import net.aelang.ast.ComplexAccessNode;
 import net.aelang.runtime.elements.Element;
+import net.aelang.runtime.elements.Function;
+import net.aelang.runtime.elements.Instance;
+import net.aelang.runtime.elements.Variable;
 
 import java.util.HashMap;
 

@@ -56,7 +56,7 @@ public class Parser {
             System.out.println("[Lexical Error] " + e.getMessage());
         }
         if (Global.showSyntaxTree) {
-            System.out.print((n != null) ? n.dump(0) : "<Null node>");
+            System.out.print((n != null) ? n.dump(0) : "<Null node>\n");
         }
         return n;
     }
@@ -107,6 +107,10 @@ public class Parser {
             n = parseRepeat();
         else if (current.type() == TokenType.IDEN_RECALL)
             n = parseRecall();
+        else if (current.type() == TokenType.IDEN_COMPLEX)
+            n = parseComplexDefinition();
+        else if (current.type() == TokenType.IDEN_NEW)
+            n = parseInstantiation();
         else
             n = parseFirstDegree(false);
 
@@ -478,7 +482,6 @@ public class Parser {
             throw new SyntaxError("Expected 'default' after identifier.");
 
         nextToken();
-        ;
 
         if (current.type() == TokenType.UNDEFINED)
             throw new SyntaxError("Expected expression after 'default'.");
@@ -492,7 +495,6 @@ public class Parser {
         String id = current.val();
 
         nextToken();
-        ;
 
         if (current.type() != TokenType.POINT_RIGHT)
             throw new SyntaxError("Expected assignment operator (->) after variable name.");
@@ -567,6 +569,68 @@ public class Parser {
         String field = current.val();
 
         return new ComplexAccessNode(id, field);
+    }
+
+    public ComplexDefinitionNode parseComplexDefinition() throws LexerError, SyntaxError {
+        nextToken(); // Skip 'complex'
+
+        if (current.type() != TokenType.IDEN)
+            throw new SyntaxError("Expected identifier after 'complex'.");
+
+        String id = current.val();
+
+        nextToken(); // SKip identifier
+
+        if (current.type() != TokenType.LBRACKET)
+            throw new SyntaxError("Expected '[' after complex type name \"" + id + "\"");
+
+        nextToken(); // Skip '['
+
+        if (current.type() == TokenType.RBRACKET)
+            throw new SyntaxError("Expected at least one field in complex type \"" + id + "\"");
+
+        ArrayList<String> fields = new ArrayList<>();
+
+        while (true) {
+            if (current.type() != TokenType.IDEN)
+                break;
+
+            fields.add(current.val());
+
+            nextToken(); // Skip identifier
+
+            // Closing bracket (end of fields)
+            if (current.type() == TokenType.RBRACKET)
+                break;
+
+            if (current.type() != TokenType.SEMI)
+                throw new SyntaxError("Expected ']' or ';' and more fields.");
+
+            nextToken(); // SKip ';'
+        }
+
+        if (current.type() != TokenType.RBRACKET)
+            throw new SyntaxError("Expected ']' after the list of complex fields.");
+
+        return new ComplexDefinitionNode(id, fields);
+    }
+
+    public Node parseInstantiation() throws LexerError, SyntaxError {
+        nextToken(); // SKip 'new'
+
+        if (current.type() != TokenType.IDEN)
+            throw new SyntaxError("Expected complex type name after \"new\"");
+
+        String complex = current.val();
+
+        nextToken(); // SKip type
+
+        if (current.type() != TokenType.IDEN)
+            throw new SyntaxError("Expected instance name after complex type.");
+
+       String id = current.val();
+
+       return new InstantiationNode(complex, id);
     }
 
 }

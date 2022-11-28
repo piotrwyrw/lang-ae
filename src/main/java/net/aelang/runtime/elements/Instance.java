@@ -1,33 +1,63 @@
 package net.aelang.runtime.elements;
 
-import net.aelang.ast.Node;
+import net.aelang.Pair;
+import net.aelang.ast.ImmediateNode;
+import net.aelang.ast.InstantiationNode;
+import net.aelang.ast.SolvableNode;
+import net.aelang.runtime.PersistentEnvironment;
 
 import java.util.HashMap;
 
 public class Instance extends Element {
 
-    private HashMap<String, Node> values;
-    private String function;
+    private HashMap<String, SolvableNode> values;
+    private String type;
 
-    public Instance(String id, String function, HashMap<String, Node> values) {
+    public Instance(String id, String type, HashMap<String, SolvableNode> values) {
         super(id);
-        this.function = function;
+        this.type = type;
         this.values = values;
     }
 
-    public String getFunction() {
-        return function;
+    public static Instance from(InstantiationNode node) {
+        PersistentEnvironment env = PersistentEnvironment.getInstance();
+        Pair<Class<?>, Element> el = env.findElement(node.getType());
+
+        if (el == null)
+            return null;
+        if (el.key() != Complex.class)
+            return null;
+
+        Complex type = (Complex) el.val();
+        HashMap<String, SolvableNode> fields = new HashMap<>();
+
+        for (String field : type.getFields())
+            fields.put(field, new ImmediateNode(0.0));
+
+        return new Instance(node.getId(), node.getType(), fields);
     }
 
-    public void setFunction(String function) {
-        this.function = function;
+    public SolvableNode getFieldValue(String field) {
+        return this.values.get(field);
     }
 
-    public HashMap<String, Node> getValues() {
+    public void setFieldValue(String field, SolvableNode node) {
+        this.values.put(field, node);
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public HashMap<String, SolvableNode> getValues() {
         return values;
     }
 
-    public void setValues(HashMap<String, Node> values) {
+    public void setValues(HashMap<String, SolvableNode> values) {
         this.values = values;
     }
 

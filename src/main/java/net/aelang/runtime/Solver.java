@@ -5,8 +5,10 @@ import net.aelang.SolverError;
 import net.aelang.ast.*;
 import net.aelang.runtime.elements.Element;
 import net.aelang.runtime.elements.Function;
+import net.aelang.runtime.elements.Instance;
 import net.aelang.runtime.elements.Variable;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class Solver {
@@ -32,7 +34,7 @@ public class Solver {
         if (node instanceof ComplexAccessNode castNode)
             return solveComplexAccess(castNode);
 
-        return 0.0;
+        throw new SolverError("Encountered unsupported node type while solving the expression.");
     }
 
     private double solveBinary(BinaryNode node) throws SolverError {
@@ -44,7 +46,7 @@ public class Solver {
             case SUB    -> left - right;
             case MUL    -> left * right;
             case DIV    -> left / right;
-            default     -> 0.0;
+            default     -> throw new SolverError("Encountered unknown binary operator \"" + node.op().toString().toUpperCase() + "\"");
         };
     }
 
@@ -100,9 +102,26 @@ public class Solver {
         return functionValue;
     }
 
-    private double solveComplexAccess(ComplexAccessNode node) {
-        // TODO Find a matching instance, access/solve the field, return the substitution value
-        return 0.0;
+    private double solveComplexAccess(ComplexAccessNode node) throws SolverError {
+        PersistentEnvironment env = PersistentEnvironment.getInstance();
+        String inst = node.getInstance();
+        String field = node.getField();
+        Pair<Class<?>, Element> el = env.findElement(inst);
+
+        if (el == null)
+            throw new SolverError("The element \"" + inst + "\" is not declared.");
+        if (el.key() != Instance.class)
+            throw new SolverError("The element \"" + inst + "\" is not an instance.");
+
+        Instance instanceElement = (Instance) el.val();
+        HashMap<String, SolvableNode> fields = instanceElement.getValues();
+
+        if (!fields.containsKey(field))
+            throw new SolverError("The instance \"" + inst + "\" does not contain a field named \"" + field + "\"");
+
+        double fieldValue = solve(fields.get(field));
+
+        return fieldValue;
     }
 
 }
