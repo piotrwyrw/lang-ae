@@ -1,14 +1,13 @@
 package net.aelang.parse;
 
 import net.aelang.Global;
-import net.aelang.LexerError;
-import net.aelang.SyntaxError;
 import net.aelang.ast.*;
+import net.aelang.exception.LexerError;
+import net.aelang.exception.SyntaxError;
 import net.aelang.tokenizer.Token;
 import net.aelang.tokenizer.TokenType;
 import net.aelang.tokenizer.Tokenizer;
 
-import java.rmi.StubNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,13 +28,6 @@ public class Parser {
 
         nextToken();
         nextToken();
-    }
-
-    private void nextToken() throws LexerError {
-        current = next;
-        next = tokenizer.nextToken();
-        if (next == null)
-            next = new Token(TokenType.UNDEFINED, "", 0);
     }
 
     public static Node parse(String str) {
@@ -59,6 +51,13 @@ public class Parser {
             System.out.print((n != null) ? n.dump(0) : "<Null node>\n");
         }
         return n;
+    }
+
+    private void nextToken() throws LexerError {
+        current = next;
+        next = tokenizer.nextToken();
+        if (next == null)
+            next = new Token(TokenType.UNDEFINED, "", 0);
     }
 
     public String input() {
@@ -343,7 +342,7 @@ public class Parser {
 
         String file = current.val();
 
-        return new ExecNode(file);
+        return new LoadNode(file);
     }
 
     public Node parseInfo() throws LexerError, SyntaxError {
@@ -628,9 +627,9 @@ public class Parser {
         if (current.type() != TokenType.IDEN)
             throw new SyntaxError("Expected instance name after complex type.");
 
-       String id = current.val();
+        String id = current.val();
 
-       return new InstantiationNode(complex, id);
+        return new InstantiationNode(complex, id);
     }
 
 }

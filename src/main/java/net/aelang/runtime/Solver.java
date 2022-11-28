@@ -1,8 +1,8 @@
 package net.aelang.runtime;
 
 import net.aelang.Pair;
-import net.aelang.SolverError;
 import net.aelang.ast.*;
+import net.aelang.exception.SolverError;
 import net.aelang.runtime.elements.Element;
 import net.aelang.runtime.elements.Function;
 import net.aelang.runtime.elements.Instance;
@@ -16,7 +16,17 @@ public class Solver {
     private boolean allowSubstitution = false;
     private List<SolvableNode> substitutes;
 
-    public double solve(SolvableNode node) throws SolverError {
+    public double solverFrontend(SolvableNode node) {
+        double result = 0.0;
+        try {
+            result = solve(node);
+        } catch (SolverError e) {
+            System.out.println("[Solver Error] " + e.getMessage());
+        }
+        return result;
+    }
+
+    private double solve(SolvableNode node) throws SolverError {
         if (node instanceof BinaryNode castNode)
             return solveBinary(castNode);
 
@@ -42,11 +52,12 @@ public class Solver {
         double right = solve(node.right());
 
         return switch (node.op()) {
-            case ADD    -> left + right;
-            case SUB    -> left - right;
-            case MUL    -> left * right;
-            case DIV    -> left / right;
-            default     -> throw new SolverError("Encountered unknown binary operator \"" + node.op().toString().toUpperCase() + "\"");
+            case ADD -> left + right;
+            case SUB -> left - right;
+            case MUL -> left * right;
+            case DIV -> left / right;
+            default ->
+                    throw new SolverError("Encountered unknown binary operator \"" + node.op().toString().toUpperCase() + "\"");
         };
     }
 

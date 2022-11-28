@@ -1,7 +1,6 @@
 package net.aelang.runtime.elements;
 
 import net.aelang.ast.FunctionDefinitionNode;
-import net.aelang.ast.Node;
 import net.aelang.ast.SolvableNode;
 
 public class Function extends Element {

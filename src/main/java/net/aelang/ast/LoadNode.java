@@ -2,11 +2,11 @@ package net.aelang.ast;
 
 import net.aelang.Tools;
 
-public class ExecNode extends Node {
+public class LoadNode extends Node {
 
     private String file;
 
-    public ExecNode(String file) {
+    public LoadNode(String file) {
         this.file = file;
     }
 

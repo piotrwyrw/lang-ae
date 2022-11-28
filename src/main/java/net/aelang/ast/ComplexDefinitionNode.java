@@ -33,11 +33,11 @@ public class ComplexDefinitionNode extends Node {
     @Override
     public String dump(int lpad) {
         String s = Tools.leftpad(lpad) + "Complex Definition Node (" + id + "):\n";
-        lpad ++;
+        lpad++;
         for (String field : fields) {
             s += Tools.leftpad(lpad) + field + '\n';
         }
-        lpad --;
+        lpad--;
         return s;
     }
 

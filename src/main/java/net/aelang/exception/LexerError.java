@@ -1,4 +1,4 @@
-package net.aelang;
+package net.aelang.exception;
 
 public class LexerError extends Exception {
 

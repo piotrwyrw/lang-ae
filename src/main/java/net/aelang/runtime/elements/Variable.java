@@ -1,6 +1,5 @@
 package net.aelang.runtime.elements;
 
-import net.aelang.ast.Node;
 import net.aelang.ast.SolvableNode;
 import net.aelang.ast.VariableDeclarationNode;
 

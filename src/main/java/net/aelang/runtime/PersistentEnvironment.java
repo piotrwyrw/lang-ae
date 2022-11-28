@@ -1,11 +1,7 @@
 package net.aelang.runtime;
 
 import net.aelang.Pair;
-import net.aelang.ast.ComplexAccessNode;
 import net.aelang.runtime.elements.Element;
-import net.aelang.runtime.elements.Function;
-import net.aelang.runtime.elements.Instance;
-import net.aelang.runtime.elements.Variable;
 
 import java.util.HashMap;
 
@@ -16,6 +12,12 @@ public class PersistentEnvironment {
 
     public PersistentEnvironment() {
         this.elements = new HashMap<>();
+    }
+
+    public static PersistentEnvironment getInstance() {
+        if (env == null)
+            env = new PersistentEnvironment();
+        return env;
     }
 
     public boolean putElement(Element el) {
@@ -37,12 +39,6 @@ public class PersistentEnvironment {
             return false;
         elements.remove(id);
         return true;
-    }
-
-    public static PersistentEnvironment getInstance() {
-        if (env == null)
-            env = new PersistentEnvironment();
-        return env;
     }
 
 }

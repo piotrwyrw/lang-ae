@@ -1,7 +1,9 @@
 package net.aelang;
 
 import net.aelang.ast.Node;
+import net.aelang.ast.StatementSequenceNode;
 import net.aelang.parse.Parser;
+import net.aelang.runtime.Runtime;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -80,6 +82,11 @@ public class ReadEvalPrintLoop {
             }
 
             Node n = Parser.parse(line);
+            if (!(n instanceof StatementSequenceNode))
+                continue;
+            StatementSequenceNode ssn = (StatementSequenceNode) n;
+            Runtime runtime = new Runtime(ssn);
+            runtime.execute();
         }
 
         scanner.close();

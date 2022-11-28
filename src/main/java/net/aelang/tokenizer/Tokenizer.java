@@ -1,6 +1,6 @@
 package net.aelang.tokenizer;
 
-import net.aelang.LexerError;
+import net.aelang.exception.LexerError;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
