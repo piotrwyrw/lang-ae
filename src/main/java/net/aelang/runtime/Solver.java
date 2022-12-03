@@ -44,6 +44,9 @@ public class Solver {
         if (node instanceof ComplexAccessNode castNode)
             return solveComplexAccess(castNode);
 
+        if (node instanceof FunctionCallNode castNode)
+            return solveFunctionCall(castNode);
+
         throw new SolverError("Encountered unsupported node type while solving the expression.");
     }
 
@@ -71,6 +74,7 @@ public class Solver {
 
         if (el == null)
             throw new SolverError("The element \"" + node.id() + "\" is not declared.");
+
         if (el.key() != Variable.class)
             throw new SolverError("The element \"" + node.id() + "\" is not a variable.");
 
@@ -95,7 +99,8 @@ public class Solver {
 
         if (el == null)
             throw new SolverError("The element \"" + node.id() + "\" is not declared.");
-        if (el.key() != Variable.class)
+
+        if (el.key() != Function.class)
             throw new SolverError("The element \"" + node.id() + "\" is not a function.");
 
         Function function = (Function) el.val();
@@ -121,8 +126,9 @@ public class Solver {
 
         if (el == null)
             throw new SolverError("The element \"" + inst + "\" is not declared.");
+
         if (el.key() != Instance.class)
-            throw new SolverError("The element \"" + inst + "\" is not an instance.");
+            throw new SolverError("The element \"" + inst + "\" is not an instance of a complex type.");
 
         Instance instanceElement = (Instance) el.val();
         HashMap<String, SolvableNode> fields = instanceElement.getValues();

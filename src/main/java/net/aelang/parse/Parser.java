@@ -110,6 +110,8 @@ public class Parser {
             n = parseComplexDefinition();
         else if (current.type() == TokenType.IDEN_NEW)
             n = parseInstantiation();
+        else if (current.type() == TokenType.IDEN && next.type() == TokenType.DOT)
+            n = parseComplexAssignment();
         else
             n = parseFirstDegree(false);
 
@@ -219,7 +221,7 @@ public class Parser {
             return new UserPromptNode(msg);
         }
 
-        if (current.type() == TokenType.IDEN && next.type() == TokenType.DOT) {
+        if (current.type() == TokenType.IDEN && next.type() == TokenType.COLON) {
             return parseComplexAccess();
         }
 
@@ -503,7 +505,7 @@ public class Parser {
         if (current.type() == TokenType.UNDEFINED)
             throw new SyntaxError("Expected expression after '->'.");
 
-        Node expr = parseFirstDegree(false);
+        SolvableNode expr = parseFirstDegree(false);
 
         return new AssignmentNode(id, expr);
     }
@@ -557,13 +559,13 @@ public class Parser {
 
         nextToken();
 
-        if (current.type() != TokenType.DOT)
-            throw new SyntaxError("Expected '.' after instance name \"" + id + "\".");
+        if (current.type() != TokenType.COLON)
+            throw new SyntaxError("Expected ':' after instance name \"" + id + "\".");
 
         nextToken();
 
         if (current.type() != TokenType.IDEN)
-            throw new SyntaxError("Expected identifier after '.'");
+            throw new SyntaxError("Expected identifier after ':'");
 
         String field = current.val();
 
@@ -630,6 +632,36 @@ public class Parser {
         String id = current.val();
 
         return new InstantiationNode(complex, id);
+    }
+
+    public Node parseComplexAssignment() throws LexerError, SyntaxError {
+        String id = current.val();
+
+        nextToken();
+
+        if (current.type() != TokenType.DOT)
+            throw new SyntaxError("Expected '.' after instance name.");
+
+        nextToken();
+
+        if (current.type() != TokenType.IDEN)
+            throw new SyntaxError("Expected field name (identifier) after '.'");
+
+        String field = current.val();
+
+        nextToken();
+
+        if (current.type() != TokenType.POINT_RIGHT)
+            throw new SyntaxError("Expected assignment operator (->) after complex path.");
+
+        nextToken();
+
+        if (current.type() == TokenType.UNDEFINED)
+            throw new SyntaxError("Expected expression after '->'.");
+
+        SolvableNode expr = parseFirstDegree(false);
+
+        return new ComplexAssignmentNode(id, field, expr);
     }
 
 }

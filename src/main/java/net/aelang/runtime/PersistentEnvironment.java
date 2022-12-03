@@ -1,6 +1,7 @@
 package net.aelang.runtime;
 
 import net.aelang.Pair;
+import net.aelang.exception.RuntimeError;
 import net.aelang.runtime.elements.Element;
 
 import java.util.HashMap;
@@ -20,7 +21,9 @@ public class PersistentEnvironment {
         return env;
     }
 
-    public boolean putElement(Element el) {
+    public boolean putElement(Element el) throws RuntimeError {
+        if (el == null)
+            throw new RuntimeError("Failed to insert null element.");
         if (elements.containsKey(el.getId()))
             return false;
         elements.put(el.getId(), el);

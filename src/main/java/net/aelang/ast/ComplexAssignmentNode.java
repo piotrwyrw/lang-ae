@@ -2,17 +2,19 @@ package net.aelang.ast;
 
 import net.aelang.Tools;
 
-public class AssignmentNode extends Node {
+public class ComplexAssignmentNode extends Node {
 
     private String id;
+    private String field;
     private SolvableNode expr;
 
-    public AssignmentNode(String id, SolvableNode expr) {
+    public ComplexAssignmentNode(String id, String field, SolvableNode expr) {
         this.id = id;
+        this.field = field;
         this.expr = expr;
     }
 
-    public String id() {
+    public String getId() {
         return id;
     }
 
@@ -20,7 +22,15 @@ public class AssignmentNode extends Node {
         this.id = id;
     }
 
-    public SolvableNode expr() {
+    public String getField() {
+        return field;
+    }
+
+    public void setField(String field) {
+        this.field = field;
+    }
+
+    public SolvableNode getExpr() {
         return expr;
     }
 
@@ -30,7 +40,7 @@ public class AssignmentNode extends Node {
 
     @Override
     public String dump(int lpad) {
-        String s = Tools.leftpad(lpad) + "Assignment (" + id + "):\n";
+        String s = Tools.leftpad(lpad) + "Complex Assignment (" + id + "." + field + "):\n";
         lpad++;
         s += expr.dump(lpad);
         lpad--;

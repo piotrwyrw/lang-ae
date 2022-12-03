@@ -3,8 +3,7 @@ package net.aelang.runtime;
 import net.aelang.Pair;
 import net.aelang.ast.*;
 import net.aelang.exception.RuntimeError;
-import net.aelang.runtime.elements.Element;
-import net.aelang.runtime.elements.Function;
+import net.aelang.runtime.elements.*;
 
 public class Runtime {
 
@@ -49,7 +48,27 @@ public class Runtime {
         }
 
         if (node instanceof NoteNode castNode) {
-            node(castNode);
+            note(castNode);
+            return defaultReturn();
+        }
+
+        if (node instanceof VariableDeclarationNode castNode) {
+            variableDeclaration(castNode);
+            return defaultReturn();
+        }
+
+        if (node instanceof AssignmentNode castNode) {
+            variableAssignment(castNode);
+            return defaultReturn();
+        }
+
+        if (node instanceof InstantiationNode castNode) {
+            instantiation(castNode);
+            return defaultReturn();
+        }
+
+        if (node instanceof ComplexDefinitionNode castNode) {
+            complexDefinition(castNode);
             return defaultReturn();
         }
 
@@ -60,6 +79,11 @@ public class Runtime {
 
         if (node instanceof InfoNode castNode) {
             info(castNode);
+            return defaultReturn();
+        }
+
+        if (node instanceof ComplexAssignmentNode castNode) {
+            complexAssign(castNode);
             return defaultReturn();
         }
 
@@ -77,7 +101,26 @@ public class Runtime {
     private void functionDefinition(FunctionDefinitionNode node) throws RuntimeError {
         boolean state = PersistentEnvironment.getInstance().putElement(Function.from(node));
         if (!state)
-            throw new RuntimeError("This element is already defined \"" + node.id() + "\"");;
+            throw new RuntimeError("Element already defined \"" + node.id() + "\"");;
+    }
+
+    private void variableDeclaration(VariableDeclarationNode node) throws RuntimeError {
+        boolean state = PersistentEnvironment.getInstance().putElement(Variable.from(node));
+        if (!state)
+            throw new RuntimeError("Element already defined \"" + node.id() + "\"");
+    }
+
+    private void variableAssignment(AssignmentNode node) throws RuntimeError {
+        Pair<Class<?>, Element> el = PersistentEnvironment.getInstance().findElement(node.id());
+
+        if (el == null)
+            throw new RuntimeError("The element \"" + node.id() + "\" is not defined.");
+
+        if (el.key() != Variable.class)
+            throw new RuntimeError("The element \"" + node.id() + "\" is not a variable.");
+
+        Variable v = ((Variable) el.val());
+        v.setValue(new ImmediateNode(new Solver().solverFrontend(node.expr())));
     }
 
     private void undefine(UndefineNode node) throws RuntimeError {
@@ -86,7 +129,7 @@ public class Runtime {
             throw new RuntimeError("The element \"" + node.id() + "\" is not defined.");
     }
 
-    private void node(NoteNode node) {
+    private void note(NoteNode node) {
         System.out.println(node.str());
     }
 
@@ -98,7 +141,40 @@ public class Runtime {
         String cname = Element.classNameOf(el.val());
         if (cname.equalsIgnoreCase("unknown"))
             throw new RuntimeError("The element \"" + node.id() + "\" is of an unknown datatype.");
-        System.out.println(node.id() + " (" + cname + ")");
+        System.out.print(node.id() + " (" + cname + ")");
+        if (cname.equalsIgnoreCase("function"))
+            System.out.println(" :: " + ((Function)el.val()).getParameters() + " parameter(s)");
+        else
+            System.out.println();
+    }
+
+    private void instantiation(InstantiationNode node) throws RuntimeError {
+        boolean state = PersistentEnvironment.getInstance().putElement(Instance.from(node));
+        if (!state)
+            throw new RuntimeError("Element already defined \"" + node.getId() + "\"");
+    }
+
+    private void complexDefinition(ComplexDefinitionNode node) throws RuntimeError {
+        boolean state = PersistentEnvironment.getInstance().putElement(Complex.from(node));
+        if (!state)
+            throw new RuntimeError("Element already defined \"" + node.getId() + "\"");
+    }
+
+    private void complexAssign(ComplexAssignmentNode node) throws RuntimeError {
+        Pair<Class<?>, Element> el = PersistentEnvironment.getInstance().findElement(node.getId());
+
+        if (el == null)
+            throw new RuntimeError("The element \"" + node.getId() + "\" is not defined.");
+
+        if (el.key() != Instance.class)
+            throw new RuntimeError("The element \"" + node.getId() + "\" is not an instance of a complex type.");
+
+        Instance i = ((Instance) el.val());
+
+        if (i.getFieldValue(node.getField()) == null)
+            throw new RuntimeError("The instance \"" + node.getId() + "\" doesn't contain a field named \"" + node.getField() + "\".");
+
+        i.setFieldValue(node.getField(), node.getExpr());
     }
 
 }
