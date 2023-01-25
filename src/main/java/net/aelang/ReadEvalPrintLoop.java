@@ -82,9 +82,8 @@ public class ReadEvalPrintLoop {
             }
 
             Node n = Parser.parse(line);
-            if (!(n instanceof StatementSequenceNode))
+            if (!(n instanceof StatementSequenceNode ssn))
                 continue;
-            StatementSequenceNode ssn = (StatementSequenceNode) n;
             Runtime runtime = new Runtime(ssn);
             runtime.execute();
         }
